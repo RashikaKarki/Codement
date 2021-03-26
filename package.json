@@ -1,0 +1,25 @@
+{
+  "name": "codement",
+  "version": "1.0.0",
+  "description": "VScode extension to comment on code and share it.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RashikaKarki/Codement.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RashikaKarki/Codement/issues"
+  },
+  "homepage": "https://github.com/RashikaKarki/Codement#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.2",
+    "multer": "^1.4.2"
+  }
+}
