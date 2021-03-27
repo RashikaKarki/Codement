@@ -7116,7 +7116,7 @@ var app = (function (graphql) {
     	};
     }
 
-    // (38:2) {#if !session}
+    // (36:2) {#if !session}
     function create_if_block(ctx) {
     	let div;
     	let p;
@@ -7207,8 +7207,8 @@ var app = (function (graphql) {
     				$$invalidate(0, session = message.payload.session);
     				break;
     			case "projectChosen":
-    				message.payload.project;
-    				message.payload.container;
+    				project = message.payload.project;
+    				container = message.payload.container;
     				break;
     		}
     	});

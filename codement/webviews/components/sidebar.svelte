@@ -4,8 +4,6 @@
 	
 	$: session = null;
 	
-	let project;
-	let container;
 	window.addEventListener("message", async (event) => {
 	  const message = event.data;
 	  switch (message.command) {

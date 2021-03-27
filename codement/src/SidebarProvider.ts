@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { Credentials } from "./authentication";
-import { HomePanel } from "./HomePanel";
 
 export class SidebarProvider implements vscode.WebviewViewProvider{
 
@@ -62,9 +61,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider{
 					payload: { session: session },
 					});
 		
-					if (this.ext_uri) {
-					HomePanel.createOrShow(this.ext_uri, { session: session }); //create a Homepanel window on sign in
-					}
 				} else {
 					vscode.window.showErrorMessage(
 					"Could not authenticate with GitHub, please try again."
@@ -73,44 +69,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider{
 		
 				break;
 				}
-				case "onChangeFilter": {
-				if (!data.value) {
-					return;
-				}
-				HomePanel.updateFilters(data.value);
-				break;
-				}
-				case "onInfo": {
-				if (!data.value) {
-					return;
-				}
-				vscode.window.showInformationMessage(data.value);
-				break;
-				}
-				case "onError": {
-				if (!data.value) {
-					return;
-				}
-				vscode.window.showErrorMessage(data.value);
-				break;
-				}
+				
 			}
 			});
 		}
 		
-		public static chooseProject(data: any | null) {
-			if (SidebarProvider.currentView) {
-			SidebarProvider.currentView.webview.postMessage({
-				command: "projectChosen",
-				payload: { project: data.project, container: data.container },
-			});
-			}
-		}
-		
-		public revive(panel: vscode.WebviewView) {
-			this._view = panel;
-		}
-
 		private _getHtmlForWebview(webview: vscode.Webview) {
 				const styleResetUri = webview.asWebviewUri(
 				vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
