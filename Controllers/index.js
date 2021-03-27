@@ -9,6 +9,7 @@ const SetRoutes =  (app) => {
 
   app.get('/file', fileController.downloadFileWithCmt);
   app.get('/list/file', userController.getFilesName);
+  app.get('/comment', commentController.getComments);
   //app.post('/commenter', userController.addCommenter);
 }
 

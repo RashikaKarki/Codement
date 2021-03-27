@@ -42,6 +42,24 @@ class CommentController {
       next(error)
     }
   }
+
+  static async getComments(req, res, next) {
+    try{
+      let { filename } = req.body;
+
+      await fileModel.findOne({name: filename}).populate('comments').exec(function(err, commentList){
+        if(err){
+          console.log(err);
+        }
+        return res.status(200).send({
+          comments: [...commentList.comments]
+        })
+      });
+
+    }catch(error){
+      next(error)
+    }
+  }
 }
 
 module.exports = CommentController;
