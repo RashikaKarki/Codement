@@ -1,7 +1,7 @@
+const userController = require('./userController');
+
 const SetRoutes =  (app) => {
-  app.get('/', (req, res)=>{
-    res.send("Hello Word!");
-  });
+  app.post('/user/login', userController.logUser);
 }
 
 module.exports = { SetRoutes };

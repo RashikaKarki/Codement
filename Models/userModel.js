@@ -6,6 +6,6 @@ let userSchema = new mongoose.Schema({
   accessFiles: [{type: mongoose.Schema.ObjectId, ref: 'files'}]
 });
 
-let userModel = mongoose.model('files', userSchema);
+let userModel = mongoose.model('users', userSchema);
 
 module.exports = userModel;
