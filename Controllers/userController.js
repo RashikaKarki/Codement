@@ -5,9 +5,9 @@ const promiseHandler = require('../Utils/promiseHandler');
 class UserController {
   static async logUser(req, res, next){
     try{
-      let { uName, fName } = req.body;
+      let { uname, fname } = req.body;
 
-      let [userInfo, error] = await promiseHandler(userModel.find({userName: uName}));
+      let [userInfo, error] = await promiseHandler(userModel.find({userName: uname}));
 
       if(error){
         throw new Error("Can't authenticate");
@@ -16,7 +16,7 @@ class UserController {
       if(userInfo.length !== 0){
         console.log("User already in database");
       }else{
-        let newUser = new userModel({name: fName, userName: uName});
+        let newUser = new userModel({name: fname, userName: uname});
         let [_newUser, err] = await promiseHandler(newUser.save());
 
         if(err){
@@ -25,7 +25,6 @@ class UserController {
         }
       }
 
-      req.uName = uName;
       return res.status(200).send({
         success:true,
       });

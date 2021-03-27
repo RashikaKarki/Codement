@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 8000;
 const MongoURL = process.env.MONGOURL;
 const app = express();
 
-if(!fs.existsSync('files')){
+if(!fs.existsSync('files')){ //make 'files' folder if not exist for storing uploaded files
   fs.mkdirSync('files');
 }
 
@@ -34,12 +34,12 @@ const fileStorage = multer.diskStorage({
 app.use(multer({storage: fileStorage}).single('source'))
 
 /**testing in browser*/
-// const path = require('path');
-// app.use(express.static(path.join(__dirname, "public")));
+const path = require('path');
+app.use(express.static(path.join(__dirname, "public")));
 
-// app.get("/", (req, res) =>{
-//   res.render('index.html');
-// });
+app.get("/", (req, res) =>{
+  res.render('index.html');
+});
 
 // app.post("/file", (req, res, next) => {
 //   const fileInfo = req.file;
