@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ConnectDB = async (connectionURL) => {
   try{
+    // connection request to mongoDB Atlas
     await mongoose.connect(connectionURL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

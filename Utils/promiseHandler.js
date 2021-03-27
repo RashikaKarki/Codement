@@ -1,3 +1,4 @@
+// handles promise calls
 const promiseHandler = (promise) => {
   return promise
     .then((data) => [data, undefined])

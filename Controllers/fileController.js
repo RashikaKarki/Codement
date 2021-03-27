@@ -5,8 +5,8 @@ const path = require('path');
 class FileController {
   static async saveFile(req, res, next){
     try{
-      let {uname, commenter} = req.body;
-      const fileInfo = req.file;
+      let {uname, commenter} = req.body; // retrive owner username and commenter username
+      const fileInfo = req.file; // retirve file info
 
       let newFile = new fileModel({
         name: fileInfo.filename,
@@ -15,23 +15,25 @@ class FileController {
         accessTo: commenter
       });
 
-      let [newFl, err] = await promiseHandler(newFile.save());
+      let [_newFl, err] = await promiseHandler(newFile.save()); // save file info to database
 
       if(err){
         console.log(err);
         throw new Error("Can't save the file!");
       }
 
-      let [user, error] = await promiseHandler(userModel.findOne({userName: uname}));
+      [commenter, uname].forEach(person => {
+        let [user, error] = await promiseHandler(userModel.findOne({userName: person}));
 
-      if(error){
-        console.log(error);
-        throw new Error("Can't save the file!");
-      }
+        if(error){
+          console.log(error);
+          throw new Error("Can't save the file!");
+        }
 
-      user.accessFiles.push(fileInfo.filename);
+        user.accessFiles.push(fileInfo.filename); // add file to user(owner and commentor) accessFiles field
 
-      user.save();
+        user.save();
+      });
 
       return res.status(200).send({
         success:true,
@@ -44,11 +46,11 @@ class FileController {
 
   static async downloadFileWithCmt(req, res, next) {
     try{
-      let { flname } = req.body
+      let { flname } = req.query
 
-      let path1 = __dirname + '/../files/'+flname;
+      let path1 = __dirname + '/../files/'+flname; //get access to file's location
 
-      res.download(path1, (err)=>{
+      res.download(path1, (err)=>{ // download response
         if(err){
           console.log(err);
         }

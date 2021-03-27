@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 8000;
 const MongoURL = process.env.MONGOURL;
 const app = express();
 
-if(!fs.existsSync('files')){ //make 'files' folder if not exist for storing uploaded files
+// make 'files' folder if not exist for storing uploaded files
+if(!fs.existsSync('files')){
   fs.mkdirSync('files');
 }
 
@@ -22,6 +23,7 @@ try {
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+// multer setting for file storgae location and name
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) =>{
     cb(null, 'files');
@@ -34,18 +36,19 @@ const fileStorage = multer.diskStorage({
 app.use(multer({storage: fileStorage}).single('source'))
 
 /**testing in browser*/
-const path = require('path');
-app.use(express.static(path.join(__dirname, "public")));
+// const path = require('path');
+// app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) =>{
-  res.render('index.html');
-});
+// app.get("/", (req, res) =>{
+//   res.render('index.html');
+// });
 
 // app.post("/file", (req, res, next) => {
 //   const fileInfo = req.file;
 //   console.log(fileInfo);
 // });
 /** */
+
 SetRoutes(app); //Add REST API endpoints
 
 //Default error handler
