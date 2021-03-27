@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const fs = require('fs');
-const { ConnectDB } = require('./middlewares/db');
+const { ConnectDB } = require('./Middlewares/db');
+const { SetRoutes } = require('./Controllers');
 
 require('dotenv').config();
 
@@ -45,7 +46,9 @@ app.use(multer({storage: fileStorage}).single('source'))
 //   console.log(fileInfo);
 // });
 /** */
+SetRoutes(app); //Add REST API endpoints
 
+//Default error handler
 app.use((err, req, res, next) => {
   console.log(err);
   res.status(400).send({
