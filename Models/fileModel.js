@@ -5,7 +5,7 @@ let fileSchema = new mongoose.Schema({
   path: {type: String, required: true},
   owner: {type: String, required: true},
   comments: [{type: mongoose.Schema.ObjectId, ref: 'comments'}],
-  accessTo: [String]
+  commenter: String
 });
 
 let fileModel = mongoose.model('files', fileSchema);

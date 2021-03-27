@@ -1,17 +1,18 @@
 const {fileModel, userModel} = require('../Models');
 const promiseHandler = require('../Utils/promiseHandler');
+const path = require('path');
 
 class FileController {
   static async saveFile(req, res, next){
     try{
-      let {uname} = req.body;
+      let {uname, commenter} = req.body;
       const fileInfo = req.file;
 
       let newFile = new fileModel({
         name: fileInfo.filename,
         path: fileInfo.path,
         owner: uname,
-        accessTo: [uname]
+        accessTo: commenter
       });
 
       let [newFl, err] = await promiseHandler(newFile.save());
@@ -38,6 +39,22 @@ class FileController {
 
     }catch(error){
       next(error)
+    }
+  }
+
+  static async downloadFileWithCmt(req, res, next) {
+    try{
+      let { flname } = req.body
+
+      let path1 = __dirname + '/../files/'+flname;
+
+      res.download(path1, (err)=>{
+        if(err){
+          console.log(err);
+        }
+      });
+    }catch(error){
+      next(error);
     }
   }
 }
