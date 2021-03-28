@@ -50,3 +50,6 @@
     - `filename`: filename of the file(shoud match filename in db) (String)
     
     Passed in `req.query`.
+
+### Database Connection:
+  Mongo Atlas is used as a database service for the project. In order to connect to the database create a connection string and store in `.env` folder as `MONGOURL="<CONNECTION_STRING>"` in projects root folder. 

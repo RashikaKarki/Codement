@@ -22,7 +22,7 @@ class FileController {
         throw new Error("Can't save the file!");
       }
 
-      [commenter, uname].forEach(person => {
+      [commenter, uname].forEach(async(person) => {
         let [user, error] = await promiseHandler(userModel.findOne({userName: person}));
 
         if(error){

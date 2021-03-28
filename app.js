@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const cors = require('cors');
 const fs = require('fs');
 const { ConnectDB } = require('./Middlewares/db');
 const { SetRoutes } = require('./Controllers');
@@ -20,6 +21,7 @@ try {
   ConnectDB(MongoURL);
 } catch (next) {}
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
