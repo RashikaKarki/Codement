@@ -1,6 +1,9 @@
 # Codement
 
-![Codement](https://socialify.git.ci/RashikaKarki/Codement/image?description=1&issues=1&language=1&stargazers=1&theme=Dark)
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![GitHub Issues](https://img.shields.io/github/issues/RashikaKarki/Codement.svg)](https://github.com/RashikaKarki/Codement/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/RashikaKarki/Codement.svg)](https://github.com/RashikaKarki/Codement/pulls)
+![Codement](https://socialify.git.ci/RashikaKarki/Codement/image?description=1&language=1&theme=Light)
 
 Codement is a vscode-extension that helps you share and get feedback on your code with ease even in early stages. 
 
