@@ -1,11 +1,12 @@
 <script>
   import { onMount } from "svelte";
-  import { createEventDispatcher} from 'svelte';
-import { bind } from "svelte/internal";
 
   export let session;
   $: files = null;
+  $: commentList = null;
   let results;
+  let comments;
+  let user;
   let source = null;
   let commenter = null;
   let uname = session.account.label;
@@ -23,8 +24,8 @@ import { bind } from "svelte/internal";
   }
 
   onMount(async()=>{
-    let userName = session.account.label;
-    const response = await fetch(`http://localhost:8000/list/file?uname=testu`)
+    user = session.account.label;
+    const response = await fetch(`http://localhost:8000/list/file?uname=${user}`)
     files = await response.json();
     console.log(files.files)
     if(files.files.length !== 0){
@@ -32,59 +33,48 @@ import { bind } from "svelte/internal";
     }
   });
   
-let dispatch = createEventDispatcher()
+  const pullComments = async () => {
+    console.log("commeemlad");
+    let filename = document.getElementById("result1").value;
+    const response = await fetch(`http://localhost:8000/comment?filename=${filename}`);
+    commentList = await response.json();
+    comments = commentList.comments;
+  }
 
-const url = 'http://localhost:8000/file';
+  const commentHandler = async () => {
+    let filename = document.getElementById("result").value;
+    let line = document.getElementById("line").value;
+    let uname = document.getElementById("uname").value;
+    let comment = document.getElementById("comment").value;
 
-// request options
-const options = {
-    method: 'POST',
-    body: JSON.stringify({source}),
-    headers: {
-        'Content-Type': 'application/json'
+    console.log("Uname", uname);
+
+    var details = {
+      'uname': uname,
+      'filename' : filename,
+      'line': line,
+      'comment': comment
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
     }
-}
+    formBody = formBody.join("&");
 
-// send POST request
-fetch(url, options)
-    .then(res => res.json())
-    .then(res => console.log(res));
+    const response = await fetch("http://localhost:8000/comment", {
+      method: 'POST',
+      headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
+      body: formBody
+    });
+  }
 
-    const submitHandler = () => {
-        console.log(source)
-        dispatch('add')
-    }
-
-
-    const comment_url = 'http://localhost:8000/comment';
-
-// request 
-const comments = {
-    method: 'POST',
-    body: JSON.stringify({
-      uname,
-      line,
-      comment,
-      filename
-    }),
-    headers: {
-        'Content-Type': 'application/json'
-    }
-}
-
-// send POST request
-fetch(url, comments)
-    .then(res => res.json())
-    .then(res => console.log(res));
-
-    const commentHandler = () => {
-      var selected_option = document.getElementById("result");
-      var filename = selected_option.value;
-      console.log(comment)
-      dispatch('add')
-    }
-
-
+  const downloadHandler = () => {
+    let fl = document.getElementById("result1").value;
+    ext_vscode.postMessage({ type: "download", value: fl });
+  }
 </script>
 
 
@@ -95,49 +85,63 @@ fetch(url, comments)
  {:else if !results}
   <div>
     <p>You currently have no access to any files</p>
+    <hr>
+    <button
+      on:click={() => {
+        ext_vscode.postMessage({ type: "upload", value: "success" });
+      }}
+    > Share File </button>
   </div>
 {:else}
   <div>
-    <h2>Share file To get feedback</h2>
-    <form on:submit|preventDefault={submitHandler}>
-    <label for="uname"> UserName: </label>
-    <input  bind:value={commenter} type="text" name="uname" id="uname"/>
-    <br>
-    <label for="source"> Source Code: </label>
-    <input
-      type="file"
-      name="source"
-      id="source"
-      bind:value={source}
-    />
-    <button type="submit" >Submit</button>
-    <br>
-    </form>
+    <button
+      on:click={() => {
+        ext_vscode.postMessage({ type: "upload", value: "success" });
+      }}
+    > Share File </button>
     <hr>
-    
-    <br>
-    <h2>Comment Code</h2>
-    <form on:submit|preventDefault={commentHandler}>
+    <form>
       <label for="result">Choose a file to comment:</label>
-      <select name="result" id="result" on:change="{() => filename = ''}" >
+      <select name="result" id="result">
       {#each results as result}
         <option value={result} >{result}</option>
       {/each}
       </select>
-      <br>
       <label for="line"> Line Number: </label>
-      <input  bind:value={line} type="text" name="line" id="line"/>
+      <input type="text" name="line" id="line"/>
       <br>
       <label for="comment"> Comment: </label>
       <input
         type="text"
         name="comment"
         id="comment"
-        bind:value={comment}
       />
-      <button type = "submit">Comment</button>
+      <input type="hidden" name="uname" id="uname" value={user}/>
+      <button type = "submit" on:click={commentHandler}>Comment</button>
     </form>
+    <hr>
+    
+    <br>
+      <form>
+        <label for="result1">Select a file to load comments:</label>
+        <select name="result1" id="result1">
+        {#each results as result}
+          <option value={result} >{result}</option>
+        {/each}
+        </select>
+        <button type = "submit" on:click={downloadHandler}>Download</button>
+        <button type = "submit" on:click={pullComments}>Load Comment</button>
+      </form>
+      {#if commentList}
+        {#each comments as comment}
+          <div>
+            <p><span style="color: #add8e6">Line:</span> {comment.lines}</p>
+            <p><span style="color: green"> Description: </span> {comment.description}</p>
+            <p><span style="color: green">Created At:</span>{comment.createdAt}</p>
+            <p><span style="color: green"> Created By: </span> {comment.createdBy}</p>
+          </div>
+          <br>
+        {/each}
+      {/if}
     </div>
-  
-
 {/if}
