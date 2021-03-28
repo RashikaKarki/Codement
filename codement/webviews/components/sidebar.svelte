@@ -1,52 +1,54 @@
 <script>
-	import { ApolloClient, InMemoryCache } from "@apollo/client";
-	import { setClient } from "svelte-apollo";
-	
-	$: session = null;
-	
-	window.addEventListener("message", async (event) => {
-	  const message = event.data;
-	  switch (message.command) {
-		case "authComplete":
-		  session = message.payload.session;
-		  break;
-		case "projectChosen":
-		  project = message.payload.project;
-		  container = message.payload.container;
-		  break;
-	  }
-	});
-	// send message as soon as sidebar loads.
-	ext_vscode.postMessage({ type: "onSignIn", value: "success" });
-	let client;
-	$: {
-	  if (session) {
-		client = new ApolloClient({
-		  uri: "https://api.github.com/graphql",
-		  cache: new InMemoryCache(),
-		  headers: {
-			authorization: `Bearer ${session.accessToken}`,
-		  },
-		});
-		setClient(client);
-	  }
-	}
-  </script>
-  
-  {#if !session}
-	<div>
-	  <p>Sign in with GitHub to get started.</p>
-	  <button
-		on:click={() => {
-		  //send message to SidebarProvider.ts
-		  global.ext_vscode.postMessage({ type: "onSignIn", value: "success" });
-		}}
-	  >
-		Sign in with GitHub
-	  </button>
-	</div>
-  {:else}
-	<div>
-	  <h2 style="margin-bottom: 1rem">Share Code</h2>
-	</div>
-  {/if}
+  import { onMount } from "svelte";
+  import FileList from './fileList.svelte';
+
+  $: session = null;
+  $: files = null;
+
+  window.addEventListener("message", async (event) => {
+    const message = event.data;
+
+    switch (message.command) {
+      case "authComplete":
+        var details = {
+        'uname': message.payload.session.account.label,
+        };
+
+        var formBody = [];
+        for (var property in details) {
+          var encodedKey = encodeURIComponent(property);
+          var encodedValue = encodeURIComponent(details[property]);
+          formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+        const response = await fetch("http://localhost:8000/user/log", {
+          method: 'POST',
+          headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
+          body: formBody
+        });
+
+        session = message.payload.session;
+        console.log(session);
+        break;
+    }
+  });
+  // send message as soon as sidebar loads.
+  ext_vscode.postMessage({ type: "onSignIn", value: "success" });
+
+</script>
+
+{#if !session}
+  <div>
+    <p>Sign in with GitHub to get started.</p>
+    <button
+      on:click={ 
+        () => { //send message to SidebarProvider.ts
+          ext_vscode.postMessage({type: 'onSignIn', value: 'success'});
+        }
+      }
+    > Sign in with GitHub </button>
+  </div>
+{:else}
+  <FileList {session} />
+{/if}
