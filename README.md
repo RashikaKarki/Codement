@@ -15,9 +15,9 @@ As a programmer it always helps to get feedback on our code and GitHub Pull Requ
 
 ### 1.0.0
 
-- Sharing your code
+- Sharing your files
 - Browsing files shared with you
-- Commenting on the code shared with you
+- Commenting on the file shared with you
 
 
 ## VSCode Extension
