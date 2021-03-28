@@ -44,7 +44,7 @@
     <button
       on:click={ 
         () => { //send message to SidebarProvider.ts
-          ext_vscode.postMessage({type: 'onSignIn', value: 'success'});
+          global.ext_vscode.postMessage({type: 'onSignIn', value: 'success'});
         }
       }
     > Sign in with GitHub </button>

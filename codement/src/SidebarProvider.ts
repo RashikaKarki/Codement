@@ -64,6 +64,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
           break;
         }
+				case "upload":{
+					vscode.env.openExternal(vscode.Uri.parse("http://localhost:8000/"));
+					break;
+				}
+				case "download":{
+					vscode.env.openExternal(vscode.Uri.parse(`http://localhost:8000/file?flname=${data.value}`));
+					break;
+				}
 				case "onInfo": {
 					if (!data.value) {
 						return;
