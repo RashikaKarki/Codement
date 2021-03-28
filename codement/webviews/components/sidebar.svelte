@@ -1,15 +1,33 @@
 <script>
   import { onMount } from "svelte";
+  import FileList from './fileList.svelte';
 
   $: session = null;
   $: files = null;
-  let result;
 
   window.addEventListener("message", async (event) => {
     const message = event.data;
 
     switch (message.command) {
       case "authComplete":
+        var details = {
+        'uname': message.payload.session.account.label,
+        };
+
+        var formBody = [];
+        for (var property in details) {
+          var encodedKey = encodeURIComponent(property);
+          var encodedValue = encodeURIComponent(details[property]);
+          formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+        const response = await fetch("http://localhost:8000/user/log", {
+          method: 'POST',
+          headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
+          body: formBody
+        });
+
         session = message.payload.session;
         console.log(session);
         break;
@@ -17,20 +35,6 @@
   });
   // send message as soon as sidebar loads.
   ext_vscode.postMessage({ type: "onSignIn", value: "success" });
-
-  // getResponse = async ()=>{
-  //   const response = await fetch("http://localhost:8000/list/file?uname=testu")
-  //   files = await response.json();
-  //   result = files.files[0];
-  //   console.log(files);
-  // }
-
-  onMount(async()=>{
-    const response = await fetch("http://localhost:8000/list/file?uname=testu")
-    files = await response.json();
-    result = files.files[0];
-    console.log(files);
-  });
 
 </script>
 
@@ -45,8 +49,6 @@
       }
     > Sign in with GitHub </button>
   </div>
-{:else if files}
-  <div>
-    <h1>{result}</h1>
-  </div>
+{:else}
+  <FileList {session} />
 {/if}
